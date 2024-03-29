@@ -1,0 +1,36 @@
+time.sleep(0.05)
+        #print("%s-cnt: %d" % (bkh, cnt))
+
+        inf = {}
+        s = send_data(node)
+        inf["code"] = "FC07"
+        inf["block"] = temp
+        inf["bk_id"] = bkh
+        s.send(json.dumps(inf, ensure_ascii=False).encode('utf-8'))
+
+        # print("\n\nid:%s\ninf: %s\n\n\n" % (blockid, json.dumps(inf, ensure_ascii=False)))
+
+        status = s.recv(1024)
+        if error_checker(status):
+            exit(1)
+
+        # print("status: ", status)
+        status = json.loads(status.decode('utf-8'))
+
+        # print("b%s-w5" % blockid)
+
+        end = time.time()
+
+        # print("\n\nid:%s\ninf: %s\n\n\n" % (blockid, json.dumps(inf)))
+        if status["code"] == 1:
+            print("priority %d check successful" % (pid % self.block_num))
+            self.done += 1
+        else:
+            print("priority %d failed to check and reloading... ..." % (pid % self.block_num))
+            td = threading.Thread(target=self.transpri, args=(node, pid - self.ps, self.op_id))
+            td.start()
+
+
+        print("self.done = ", self.done)
+
+        exit(0)
